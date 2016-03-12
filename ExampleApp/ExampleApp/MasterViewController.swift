@@ -30,7 +30,7 @@ class MasterViewController: UITableViewController, PNChartDelegate {
     // #pragma mark - Segues
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var viewController:UIViewController = segue.destinationViewController as! UIViewController
+        var viewController:UIViewController = segue.destinationViewController 
         var ChartLabel:UILabel = UILabel(frame: CGRectMake(0, 90, 320.0, 30))
         
         ChartLabel.textColor = PNGreenColor
@@ -75,13 +75,13 @@ class MasterViewController: UITableViewController, PNChartDelegate {
             //Add BarChart
             ChartLabel.text = "Bar Chart"
             
-            var barChart = PNBarChart(frame: CGRectMake(0, 135.0, 320.0, 200.0))
+            let barChart = PNBarChart(frame: CGRectMake(0, 135.0, 320.0, 200.0))
             barChart.backgroundColor = UIColor.clearColor()
-//            barChart.yLabelFormatter = ({(yValue: CGFloat) -> NSString in
-//                var yValueParsed:CGFloat = yValue
-//                var labelText:NSString = NSString(format:"%1.f",yValueParsed)
-//                return labelText;
-//            })
+            barChart.yLabelFormatter = ({(yValue: CGFloat) -> NSString in
+                let yValueParsed:CGFloat = yValue
+                let labelText:NSString = NSString(format:"%1.f",yValueParsed)
+                return labelText;
+            })
             
             
             // remove for default animation (all bars animate at once)
@@ -101,24 +101,24 @@ class MasterViewController: UITableViewController, PNChartDelegate {
             viewController.title = "Bar Chart"
             
         default:
-            println("Hello Chart")
+            print("Hello Chart", terminator: "")
         }
         
     }
     
     func userClickedOnLineKeyPoint(point: CGPoint, lineIndex: Int, keyPointIndex: Int)
     {
-        println("Click Key on line \(point.x), \(point.y) line index is \(lineIndex) and point index is \(keyPointIndex)")
+        print("Click Key on line \(point.x), \(point.y) line index is \(lineIndex) and point index is \(keyPointIndex)")
     }
     
     func userClickedOnLinePoint(point: CGPoint, lineIndex: Int)
     {
-        println("Click Key on line \(point.x), \(point.y) line index is \(lineIndex)")
+        print("Click Key on line \(point.x), \(point.y) line index is \(lineIndex)")
     }
     
     func userClickedOnBarChartIndex(barIndex: Int)
     {
-        println("Click  on bar \(barIndex)")
+        print("Click  on bar \(barIndex)")
     }
 
 }

@@ -56,7 +56,7 @@ public class PNBarChart: UIView {
     /*
     yLabelFormatter will format the ylabel text
     */
-    var yLabelFormatter = ({(index: CGFloat) -> NSString in
+    public var yLabelFormatter = ({(yValue: CGFloat) -> NSString in
         return ""
     })
     
