@@ -22,7 +22,7 @@ public class PNBarChart: UIView {
         
         didSet{
             if showLabel {
-                xLabelWidth = (self.frame.size.width - chartMargin * 2.0) / CGFloat(self.xLabels.count)
+                xLabelWidth = (self.frame.size.width - (chartEdgeInsets.left + chartEdgeInsets.right)) / CGFloat(self.xLabels.count)
             }
         }
     }
@@ -36,7 +36,7 @@ public class PNBarChart: UIView {
                 self.getYValueMax(yValues)
             }
             
-            xLabelWidth = (self.frame.size.width - chartMargin * 2.0) / CGFloat(yValues.count)
+            xLabelWidth = (self.frame.size.width - (chartEdgeInsets.left + chartEdgeInsets.right)) / CGFloat(yValues.count)
         }
     }
     
@@ -48,9 +48,9 @@ public class PNBarChart: UIView {
     public var xLabelHeight:CGFloat = 11.0
     public var yLabelHeight:CGFloat = 20.0
     
-    /*
-    chartMargin changes chart margin
-    */
+    /**
+     The width for the vertical labels.
+     */
     public var yChartLabelWidth:CGFloat = 18.0
     
     /*
@@ -60,10 +60,7 @@ public class PNBarChart: UIView {
         return ""
     })
     
-    /*
-    chartMargin changes chart margin
-    */
-    public var chartMargin:CGFloat = 15.0
+    public var chartEdgeInsets: UIEdgeInsets = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
     
     /*
     showLabel if the Labels should be deplay
@@ -148,10 +145,10 @@ public class PNBarChart: UIView {
     public var delegate:PNChartDelegate!
     
     /**
-    * This method will call and stroke the line in animation
-    */
-    
-    // MARK: Functions
+     * This method will call and stroke the line in animation
+     */
+     
+     // MARK: Functions
     
     public  func strokeChart() {
         self.viewCleanupForCollection(labels)
@@ -170,10 +167,10 @@ public class PNBarChart: UIView {
                     label.textAlignment = NSTextAlignment.Center
                     label.text = labelText as String
                     label.sizeToFit()
-                    let labelXPosition:CGFloat  = ( CGFloat(index) *  xLabelWidth + chartMargin + xLabelWidth / 2.0 )
+                    let labelXPosition:CGFloat  = ( CGFloat(index) *  xLabelWidth + chartEdgeInsets.left + xLabelWidth / 2.0 )
                     
                     label.center = CGPointMake(labelXPosition,
-                        self.frame.size.height - xLabelHeight - chartMargin + label.frame.size.height / 2.0 + labelMarginTop)
+                        self.frame.size.height - xLabelHeight - chartEdgeInsets.bottom + label.frame.size.height / 2.0 + labelMarginTop)
                     labelAddCount = 0
                     
                     labels.addObject(label)
@@ -183,12 +180,12 @@ public class PNBarChart: UIView {
             
             //Add y labels
             
-            let yLabelSectionHeight:CGFloat = (self.frame.size.height - chartMargin * 2.0 - xLabelHeight) / CGFloat(yLabelSum)
+            let yLabelSectionHeight:CGFloat = (self.frame.size.height - (chartEdgeInsets.top + chartEdgeInsets.bottom) - xLabelHeight) / CGFloat(yLabelSum)
             
             for var index:Int = 0; index < yLabelSum; ++index {
                 let labelText:NSString = yLabelFormatter((yValueMax * ( CGFloat(yLabelSum - index) / CGFloat(yLabelSum) ) ))
-                    
-                let label:PNChartLabel = PNChartLabel(frame: CGRectMake(0,yLabelSectionHeight * CGFloat(index) + chartMargin - yLabelHeight/2.0, yChartLabelWidth, yLabelHeight))
+                
+                let label:PNChartLabel = PNChartLabel(frame: CGRectMake(0,yLabelSectionHeight * CGFloat(index) + chartEdgeInsets.top - yLabelHeight/2.0, yChartLabelWidth, yLabelHeight))
                 
                 label.font = labelFont
                 label.textColor = labelTextColor
@@ -202,7 +199,7 @@ public class PNBarChart: UIView {
         
         self.viewCleanupForCollection(bars)
         //Add bars
-        let chartCavanHeight:CGFloat = frame.size.height - chartMargin * 2 - xLabelHeight
+        let chartCavanHeight:CGFloat = frame.size.height - (chartEdgeInsets.top + chartEdgeInsets.bottom) - xLabelHeight
         var index:Int = 0
         
         for valueObj: AnyObject in yValues{
@@ -216,9 +213,9 @@ public class PNBarChart: UIView {
             
             if barWidth > 0 {
                 
-                barXPosition = CGFloat(index) *  xLabelWidth + chartMargin + (xLabelWidth / 2.0) - (barWidth / 2.0)
+                barXPosition = CGFloat(index) *  xLabelWidth + chartEdgeInsets.left + (xLabelWidth / 2.0) - (barWidth / 2.0)
             }else{
-                barXPosition = CGFloat(index) *  xLabelWidth + chartMargin + xLabelWidth * 0.25
+                barXPosition = CGFloat(index) *  xLabelWidth + chartEdgeInsets.left + xLabelWidth * 0.25
                 if showLabel {
                     barWidth = xLabelWidth * 0.5
                     
@@ -230,7 +227,7 @@ public class PNBarChart: UIView {
             }
             
             bar = PNBar(frame: CGRectMake(barXPosition, //Bar X position
-                frame.size.height - chartCavanHeight - xLabelHeight - chartMargin, //Bar Y position
+                frame.size.height - chartCavanHeight - xLabelHeight - chartEdgeInsets.bottom, //Bar Y position
                 barWidth, // Bar witdh
                 chartCavanHeight)) //Bar height
             
@@ -281,15 +278,16 @@ public class PNBarChart: UIView {
             
             let progressline:UIBezierPath = UIBezierPath()
             
-            progressline.moveToPoint(CGPointMake(chartMargin, frame.size.height - xLabelHeight - chartMargin))
-            progressline.addLineToPoint(CGPointMake(frame.size.width - chartMargin,  frame.size.height - xLabelHeight - chartMargin))
+            let yOffset: CGFloat = frame.size.height - xLabelHeight - chartEdgeInsets.bottom
+            progressline.moveToPoint(CGPointMake(chartEdgeInsets.left, yOffset))
+            progressline.addLineToPoint(CGPointMake(frame.size.width, yOffset))
             
             progressline.lineWidth = 1.0
             progressline.lineCapStyle = CGLineCap.Square
             chartBottomLine.path = progressline.CGPath
             
             
-            chartBottomLine.strokeColor = PNLightGreyColor.CGColor;
+            chartBottomLine.strokeColor = PNGreyColor.CGColor;
             
             
             let pathAnimation:CABasicAnimation = CABasicAnimation(keyPath: "strokeEnd")
@@ -312,15 +310,15 @@ public class PNBarChart: UIView {
             
             let progressLeftline:UIBezierPath = UIBezierPath()
             
-            progressLeftline.moveToPoint(CGPointMake(chartMargin, frame.size.height - xLabelHeight - chartMargin))
-            progressLeftline.addLineToPoint(CGPointMake(chartMargin,  chartMargin))
+            progressLeftline.moveToPoint(CGPointMake(chartEdgeInsets.left, frame.size.height - xLabelHeight - chartEdgeInsets.bottom))
+            progressLeftline.addLineToPoint(CGPointMake(chartEdgeInsets.left,  chartEdgeInsets.top))
             
             progressLeftline.lineWidth = 1.0
             progressLeftline.lineCapStyle = CGLineCap.Square
             chartLeftLine.path = progressLeftline.CGPath
             
             
-            chartLeftLine.strokeColor = PNLightGreyColor.CGColor
+            chartLeftLine.strokeColor = PNGreyColor.CGColor
             
             
             let pathLeftAnimation: CABasicAnimation = CABasicAnimation(keyPath: "strokeEnd")
@@ -401,6 +399,6 @@ public class PNBarChart: UIView {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     
 }
